@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2a4a"/>
+      <stop offset="1" stop-color="#3e5c8f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- night sky -->
+  <rect width="1600" height="1600" fill="url(#sky)"/>
+
+  <!-- stars -->
+  <g fill="#ffffff">
+    <circle cx="180" cy="180" r="10"/>
+    <circle cx="420" cy="120" r="7"/>
+    <circle cx="640" cy="230" r="8"/>
+    <circle cx="950" cy="140" r="7"/>
+    <circle cx="1310" cy="120" r="9"/>
+    <circle cx="1460" cy="330" r="7"/>
+    <circle cx="120" cy="430" r="7"/>
+    <circle cx="820" cy="90" r="6"/>
+  </g>
+
+  <!-- moon -->
+  <circle cx="290" cy="230" r="130" fill="#f4e9c9"/>
+  <circle cx="338" cy="190" r="28" fill="#e2d5ac"/>
+  <circle cx="255" cy="268" r="19" fill="#e2d5ac"/>
+  <circle cx="312" cy="282" r="12" fill="#e2d5ac"/>
+
+  <!-- ground -->
+  <rect x="0" y="1400" width="1600" height="200" fill="#243755"/>
+  <rect x="0" y="1386" width="1600" height="14" fill="#2e4568"/>
+
+  <!-- crane -->
+  <g fill="#ffc93c">
+    <!-- mast -->
+    <rect x="560" y="360" width="80" height="1040"/>
+    <!-- jib (horizontal arm) -->
+    <rect x="280" y="360" width="1060" height="70"/>
+    <!-- counter-jib tip -->
+    <rect x="280" y="430" width="90" height="60"/>
+    <!-- cab -->
+    <rect x="520" y="430" width="160" height="130"/>
+    <!-- tower top -->
+    <path d="M600 200 L680 360 H520 Z"/>
+    <!-- base -->
+    <rect x="480" y="1330" width="240" height="70"/>
+  </g>
+
+  <!-- cab window -->
+  <rect x="600" y="455" width="55" height="60" fill="#22355c"/>
+
+  <!-- cable + hook + hanging beam -->
+  <rect x="1180" y="430" width="14" height="420" fill="#f4e9c9"/>
+  <path d="M1187 850 q-52 26 -10 70" fill="none" stroke="#f4e9c9" stroke-width="26" stroke-linecap="round"/>
+  <g>
+    <clipPath id="beam">
+      <rect x="1010" y="920" width="360" height="100" rx="16"/>
+    </clipPath>
+    <rect x="1010" y="920" width="360" height="100" rx="16" fill="#ffc93c"/>
+    <g clip-path="url(#beam)" fill="#1b2a4a">
+      <path d="M1010 1020 l100 -100 h55 l-100 100 z"/>
+      <path d="M1120 1020 l100 -100 h55 l-100 100 z"/>
+      <path d="M1230 1020 l100 -100 h55 l-100 100 z"/>
+    </g>
+  </g>
+</svg>

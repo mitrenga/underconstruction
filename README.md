@@ -1,3 +1,5 @@
+![](/images/app-icon-256x256.png)
+
 # Under Construction
 
 A simple, practically single-file **"UNDER CONSTRUCTION"** page with an animated SVG scene (night sky, construction site). The whole site lives in `index.php` — HTML, CSS and animations together, no dependencies.
