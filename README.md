@@ -10,11 +10,14 @@ A simple, practically single-file **"UNDER CONSTRUCTION"** page with an animated
 
 ## Deployment
 
-Just upload the repository contents to a PHP-capable host (PHP is only needed for storing the e-mails) and make sure the web server can write to `notify-emails.json`:
+Just upload the repository contents to a PHP-capable host (PHP is only needed for storing the e-mails), create the e-mail storage file from the sample and make sure the web server can write to it:
 
 ```bash
+cp notify-emails.sample.json notify-emails.json
 chmod 666 notify-emails.json   # or make it owned by the web server user
 ```
+
+`notify-emails.json` is git-ignored so the collected e-mails never end up in the repository.
 
 No build step, no dependencies.
 
@@ -23,7 +26,8 @@ No build step, no dependencies.
 | File | Description |
 |---|---|
 | `index.php` | The whole page — form handling, HTML, CSS and the animated SVG scene |
-| `notify-emails.json` | Stored e-mails for the launch notification |
+| `notify-emails.sample.json` | Sample for `notify-emails.json` — copy it on deployment |
+| `notify-emails.json` | Stored e-mails for the launch notification (git-ignored, created from the sample) |
 | `.htaccess` | Prevents the e-mail list from being downloaded over the web |
 
 ## License
