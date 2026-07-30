@@ -1,0 +1,4 @@
+# prevent the e-mail list from being downloaded over the web (Apache; on nginx this is handled by the .json deny rule in the server config)
+<Files "notify-emails.json">
+  Require all denied
+</Files>
