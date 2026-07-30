@@ -1,10 +1,56 @@
 <?php
 // store the e-mail for the launch notification
+// anti-spam: honeypot field + signed render-time token (min 4 s, max 24 h)
+// + per-IP rate limit — same trio as retrogames/sendFeedback.php
+$tsKey = __DIR__;
+$tsNow = time();
+$tsToken = $tsNow . '.' . hash_hmac('sha256', (string)$tsNow, $tsKey);
+
 $notifySaved = false;
 $notifyError = false;
+$notifyErrorMsg = 'Please enter a valid e-mail address.';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
   $email = trim($_POST['email']);
-  if (filter_var($email, FILTER_VALIDATE_EMAIL) && strlen($email) <= 254) {
+  $honeypot = trim((string)($_POST['website'] ?? ''));   // hidden field, humans leave it empty
+  [$ts, $sig] = array_pad(explode('.', (string)($_POST['ts'] ?? ''), 2), 2, '');
+
+  $tooFast = false;
+  $tooOld = false;
+  $isBot = $honeypot !== ''
+        || $ts === '' || !hash_equals(hash_hmac('sha256', $ts, $tsKey), $sig);
+  if (!$isBot) {
+    $tooFast = (int)$ts > time() - 4;
+    $tooOld  = (int)$ts < time() - 86400;
+  }
+
+  // at most 5 submissions per IP and hour
+  $rateLimited = false;
+  if (!$isBot && !$tooFast && !$tooOld) {
+    $rateFile = sys_get_temp_dir() . '/underconstruction-notify-' . md5(__DIR__) . '.json';
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+    $now = time();
+    $log = is_file($rateFile) ? (json_decode((string)file_get_contents($rateFile), true) ?: []) : [];
+    $log = array_values(array_filter($log, fn($e) => ($e['time'] ?? 0) > $now - 3600));
+    if (count(array_filter($log, fn($e) => ($e['ip'] ?? '') === $ip)) >= 5) {
+      $rateLimited = true;
+    } else {
+      $log[] = ['ip' => $ip, 'time' => $now];
+      file_put_contents($rateFile, json_encode($log), LOCK_EX);
+    }
+  }
+
+  if ($isBot) {
+    $notifySaved = true;                                 // pretend success to bots
+  } elseif ($tooFast) {
+    $notifyError = true;
+    $notifyErrorMsg = 'That was quick! Please take a moment and try again.';
+  } elseif ($tooOld) {
+    $notifyError = true;
+    $notifyErrorMsg = 'This page was open for too long, please reload it and try again.';
+  } elseif ($rateLimited) {
+    $notifyError = true;
+    $notifyErrorMsg = 'Too many submissions, please try again later.';
+  } elseif (filter_var($email, FILTER_VALIDATE_EMAIL) && strlen($email) <= 254) {
     $file = __DIR__ . '/notify-emails.json';
     $list = [];
     if (is_file($file)) {
@@ -551,12 +597,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
 <?php else: ?>
   <button type="button" class="notify-btn" id="notifyBtn">Notify me when it's ready</button>
   <form id="notifyForm" method="post" action="" hidden>
+    <input type="hidden" name="ts" value="<?php echo htmlspecialchars($tsToken, ENT_QUOTES); ?>">
+    <input type="text" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true"
+           style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
     <input type="email" name="email" placeholder="your@email.com" required maxlength="254"
            value="<?php echo $notifyError ? htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES) : ''; ?>">
     <button type="submit" class="notify-btn">Notify me</button>
   </form>
   <?php if ($notifyError): ?>
-    <p class="notify-msg err">Please enter a valid e-mail address.</p>
+    <p class="notify-msg err"><?php echo htmlspecialchars($notifyErrorMsg, ENT_QUOTES); ?></p>
   <?php endif; ?>
 <?php endif; ?>
 </div>
