@@ -1,4 +1,4 @@
-![](/images/app-icon-256x256.png)
+![](/images/screenshot.png)
 
 # Under Construction
 
