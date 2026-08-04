@@ -1,4 +1,15 @@
 <?php
+// tell search engines the site is temporarily down for maintenance:
+// 503 + Retry-After = "come back later, keep the old index" (Google's
+// recommended signal for maintenance mode), X-Robots-Tag/noindex = don't
+// index this placeholder page itself. 200 is kept for the notify-form POST
+// so the submission isn't reported as a server error.
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  http_response_code(503);
+  header('Retry-After: 86400');   // suggest re-crawling in a day
+}
+header('X-Robots-Tag: noindex, nofollow');
+
 // store the e-mail for the launch notification
 // anti-spam: honeypot field + signed render-time token (min 4 s, max 24 h)
 // + per-IP rate limit — same trio as retrogames/sendFeedback.php
@@ -76,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>Under Construction</title>
 <style>
   :root {

@@ -9,6 +9,7 @@ A simple, practically single-file **"UNDER CONSTRUCTION"** page with an animated
 - Animated "under construction" SVG scene rendered with pure CSS/SVG, responsive to both window width and height.
 - A "notify me on launch" form — submitted e-mails are stored in `notify-emails.json` (with validation and deduplication).
 - `.htaccess` blocks downloading `notify-emails.json` over the web (Apache; on nginx an equivalent deny rule is needed).
+- Search-engine friendly maintenance mode: the page answers with **HTTP 503 + `Retry-After`** (the standard "temporarily down, keep the old index" signal) and is excluded from indexing via `X-Robots-Tag` and a `robots` meta tag. Intentionally no `robots.txt` `Disallow` — crawlers must be able to fetch the page to see the 503/noindex.
 
 ## Deployment
 
